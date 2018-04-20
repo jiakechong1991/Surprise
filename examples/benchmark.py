@@ -7,7 +7,11 @@ from __future__ import (absolute_import, division, print_function,
 import time
 import datetime
 import random
+import os
+import sys
 
+UP_FOLDER = os.path.dirname(os.path.split(os.path.realpath(__file__))[0])
+sys.path.append(UP_FOLDER)
 import numpy as np
 import six
 from tabulate import tabulate
@@ -80,7 +84,7 @@ kf = KFold(random_state=0)  # folds will be the same for all algorithms.
 table = []
 for klass in classes:
     start = time.time()
-    out = cross_validate(klass(), data, ['rmse', 'mae'], kf)
+    out = cross_validate(klass(), data, ['rmse', 'mae'], kf, n_jobs=1)
     cv_time = str(datetime.timedelta(seconds=int(time.time() - start)))
     link = LINK[klass.__name__]
     mean_rmse = '{:.3f}'.format(np.mean(out['test_rmse']))
