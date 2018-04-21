@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 '''
 The :mod:`model_selection.split<surprise.model_selection.split>` module
 contains various cross-validation iterators. Design and tools are inspired from
@@ -77,7 +79,7 @@ class KFold():
 
     def __init__(self, n_splits=5, random_state=None, shuffle=True):
 
-        self.n_splits = n_splits
+        self.n_splits = n_splits  # 切分成几份
         self.shuffle = shuffle
         self.random_state = random_state
 
@@ -92,6 +94,7 @@ class KFold():
             tuple of (trainset, testset)
         '''
 
+        # data.raw_ratings 这是评分列表[(user,item,rate, time),...]
         if self.n_splits > len(data.raw_ratings) or self.n_splits < 2:
             raise ValueError('Incorrect value for n_splits={0}. '
                              'Must be >=2 and less than the number '
@@ -100,8 +103,8 @@ class KFold():
         # We use indices to avoid shuffling the original data.raw_ratings list.
         indices = np.arange(len(data.raw_ratings))
 
-        if self.shuffle:
-            get_rng(self.random_state).shuffle(indices)
+        if self.shuffle:  # 对数组进行混洗
+            get_rng(self.random_state).shuffle(indices)  # 对多维数组，仅仅会对axis=0的一个粥进行混排
 
         start, stop = 0, 0
         for fold_i in range(self.n_splits):

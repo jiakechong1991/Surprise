@@ -18,6 +18,7 @@ from .optimize_baselines import baseline_sgd
 
 
 class AlgoBase(object):
+    # 抽象类
     """Abstract class where is defined the basic behavior of a prediction
     algorithm.
 

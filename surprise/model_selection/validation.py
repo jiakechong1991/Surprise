@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 '''The validation module contains the cross_validate function, inspired from
 the mighty scikit learn.'''
 
@@ -95,9 +97,11 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
 
     cv = get_cv(cv)
 
+    # 定义一批：延时执行函数：fit_and_score:训练模型并计算误差
     delayed_list = (delayed(fit_and_score)(algo, trainset, testset, measures,
                                            return_train_measures)
                     for (trainset, testset) in cv.split(data))
+    # 开始并发的执行一堆job
     out = Parallel(n_jobs=n_jobs, pre_dispatch=pre_dispatch)(delayed_list)
 
     (test_measures_dicts,
@@ -128,6 +132,7 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
     return ret
 
 
+# 训练模型，并计算误差
 def fit_and_score(algo, trainset, testset, measures,
                   return_train_measures=False):
     '''Helper method that trains an algorithm and compute accuracy measures on
@@ -161,7 +166,7 @@ def fit_and_score(algo, trainset, testset, measures,
     '''
 
     start_fit = time.time()
-    algo.fit(trainset)
+    algo.fit(trainset)  # 在训练集上进行训练
     fit_time = time.time() - start_fit
     start_test = time.time()
     predictions = algo.test(testset)
@@ -173,7 +178,8 @@ def fit_and_score(algo, trainset, testset, measures,
     test_measures = dict()
     train_measures = dict()
     for m in measures:
-        f = getattr(accuracy, m.lower())
+        # 提取对应的测评函数--计算得分
+        f = getattr(accuracy, m.lower())  # 从一个包中提取属性函数
         test_measures[m] = f(predictions, verbose=0)
         if return_train_measures:
             train_measures[m] = f(train_predictions, verbose=0)

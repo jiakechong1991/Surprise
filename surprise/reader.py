@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 '''This module contains the Reader class.'''
 
 from __future__ import (absolute_import, division, print_function,
@@ -40,6 +42,7 @@ class Reader():
 
     """
 
+    # 如果输入name,后面的格式读取参数就不用了，否则就要自己输入格式读取参数
     def __init__(self, name=None, line_format='user item rating', sep=None,
                  rating_scale=(1, 5), skip_lines=0):
 
@@ -56,6 +59,7 @@ class Reader():
             self.rating_scale = rating_scale
 
             lower_bound, higher_bound = rating_scale
+            # 他是为了让所有的评分都是正值，offset就是把评分整体加一个偏移量
             self.offset = -lower_bound + 1 if lower_bound <= 0 else 0
 
             splitted_format = line_format.split()

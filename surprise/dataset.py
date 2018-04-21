@@ -1,3 +1,5 @@
+# -*- coding=utf-8 -*-
+
 """
 The :mod:`dataset <surprise.dataset>` module defines the :class:`Dataset` class
 and other subclasses which are used for managing datasets.
@@ -82,8 +84,8 @@ class Dataset:
                              '. Accepted values are ' +
                              ', '.join(BUILTIN_DATASETS.keys()) + '.')
 
-        # if dataset does not exist, offer to download it
-        if not os.path.isfile(dataset.path):
+        # 如果数据集文件不存在，询问是不是下载
+        if not os.path.isfile(dataset.path):  #
             answered = False
             while not answered:
                 print('Dataset ' + name + ' could not be found. Do you want '
@@ -96,9 +98,10 @@ class Dataset:
                     answered = True
                     print("Ok then, I'm out!")
                     sys.exit()
-
+            # 下载数据集
             download_builtin_dataset(name)
 
+        # 以参数字典的形式传入参数
         reader = Reader(**dataset.reader_params)
 
         return cls.load_from_file(file_path=dataset.path, reader=reader)
@@ -275,6 +278,8 @@ class DatasetAutoFolds(Dataset):
     cross-validation) are not predefined. (Or for when there are no folds at
     all)."""
 
+    # ratings_file 数据文件路径
+    # reader： 切分的reader
     def __init__(self, ratings_file=None, reader=None, df=None):
 
         Dataset.__init__(self, reader)
@@ -282,6 +287,7 @@ class DatasetAutoFolds(Dataset):
 
         if ratings_file is not None:
             self.ratings_file = ratings_file
+            # 读取这个文件中的数据: [(user, item, rating, timestamp),....]
             self.raw_ratings = self.read_ratings(self.ratings_file)
         elif df is not None:
             self.df = df
