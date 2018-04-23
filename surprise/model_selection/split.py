@@ -84,6 +84,7 @@ class KFold():
         self.random_state = random_state
 
     def split(self, data):
+        # 切分数据集
         '''Generator function to iterate over trainsets and testsets.
 
         Args:

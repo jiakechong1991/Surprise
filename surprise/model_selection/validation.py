@@ -100,7 +100,7 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
     # 定义一批：延时执行函数：fit_and_score:训练模型并计算误差
     delayed_list = (delayed(fit_and_score)(algo, trainset, testset, measures,
                                            return_train_measures)
-                    for (trainset, testset) in cv.split(data))
+                    for (trainset, testset) in cv.split(data))  # 切分数据集
     # 开始并发的执行一堆job
     out = Parallel(n_jobs=n_jobs, pre_dispatch=pre_dispatch)(delayed_list)
 
