@@ -60,7 +60,7 @@ class AlgoBase(object):
 
     def fit(self, trainset):
         """Train an algorithm on a given training set.
-
+        仅仅设置一些数据变量，无实质运算
         This method is called by every derived class as the first basic step
         for training an algorithm. It basically just initializes some internal
         structures and set the self.trainset attribute.
@@ -100,6 +100,7 @@ class AlgoBase(object):
         return self
 
     def predict(self, uid, iid, r_ui=None, clip=True, verbose=False):
+        # 预测函数；
         """Compute the rating prediction for given user and item.
 
         The ``predict`` method converts raw ids to inner ids and then calls the
@@ -145,7 +146,7 @@ class AlgoBase(object):
             iiid = 'UKN__' + str(iid)
 
         details = {}
-        try:
+        try:  # 是否预测崩溃
             est = self.estimate(iuid, iiid)
 
             # If the details dict was also returned
@@ -155,13 +156,13 @@ class AlgoBase(object):
             details['was_impossible'] = False
 
         except PredictionImpossible as e:
-            est = self.default_prediction()
+            est = self.default_prediction()  # 使用默认的预测方法
             details['was_impossible'] = True
             details['reason'] = str(e)
 
         # Remap the rating into its initial rating scale (because the rating
         # scale was translated so that ratings are all >= 1)
-        est -= self.trainset.offset
+        est -= self.trainset.offset  # 减去rating偏移量
 
         # clip estimate into [lower_bound, higher_bound]
         if clip:
@@ -184,6 +185,7 @@ class AlgoBase(object):
         child classes).
 
         Returns:
+            # 返回全部训练集rating的均值
             (float): The mean of all ratings in the trainset.
         '''
 
@@ -210,14 +212,16 @@ class AlgoBase(object):
         # The ratings are translated back to their original scale.
         predictions = [self.predict(uid,
                                     iid,
+                                    # 去除rating 的 offset
                                     r_ui_trans - self.trainset.offset,
                                     verbose=verbose)
                        for (uid, iid, r_ui_trans) in testset]
+        print(predictions[0],"+++")
         return predictions
 
     def compute_baselines(self):
         """Compute users and items baselines.
-
+        # 计算基线估值
         The way baselines are computed depends on the ``bsl_options`` parameter
         passed at the creation of the algorithm (see
         :ref:`baseline_estimates_configuration`).
@@ -244,8 +248,9 @@ class AlgoBase(object):
 
         try:
             if self.verbose:
-                print('Estimating biases using', method_name + '...')
+                print('Estimating biases using', method_name + '...!')
             self.bu, self.bi = method[method_name](self)
+            # print(self.bu, self.bi)
             return self.bu, self.bi
         except KeyError:
             raise ValueError('Invalid method ' + method_name +

@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """
 The :mod:`surprise.prediction_algorithms.predictions` module defines the
 :class:`Prediction` named tuple and the :class:`PredictionImpossible`
@@ -12,7 +13,7 @@ from collections import namedtuple
 
 class PredictionImpossible(Exception):
     """Exception raised when a prediction is impossible.
-
+    # 预测异常，就会使用默认值代替
     When raised, the estimation :math:`\hat{r}_{ui}` is set to the global mean
     of all ratings :math:`\mu`.
     """
@@ -20,6 +21,7 @@ class PredictionImpossible(Exception):
     pass
 
 
+# 一次预测结果的抽象类
 class Prediction(namedtuple('Prediction',
                             ['uid', 'iid', 'r_ui', 'est', 'details'])):
     """A named tuple for storing the results of a prediction.

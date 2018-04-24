@@ -17,7 +17,7 @@ from .. import accuracy
 
 
 def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
-                   return_train_measures=False, n_jobs=-1,
+                   return_train_measures=False, n_jobs=1,
                    pre_dispatch='2*n_jobs', verbose=False):
     '''
     Run a cross validation procedure for a given algorithm, reporting accuracy
@@ -93,17 +93,18 @@ def cross_validate(algo, data, measures=['rmse', 'mae'], cv=None,
 
     '''
 
-    measures = [m.lower() for m in measures]
+    measures = [m.lower() for m in measures]  # 误差计算指标
 
-    cv = get_cv(cv)
+    cv = get_cv(cv)  # 安全检查
 
     # 定义一批：延时执行函数：fit_and_score:训练模型并计算误差
+    # 把数据集切分(按照k-ford方式切分成10批(每批9:1))，分别进行训练
     delayed_list = (delayed(fit_and_score)(algo, trainset, testset, measures,
                                            return_train_measures)
                     for (trainset, testset) in cv.split(data))  # 切分数据集
     # 开始并发的执行一堆job
     out = Parallel(n_jobs=n_jobs, pre_dispatch=pre_dispatch)(delayed_list)
-
+    # print(out)
     (test_measures_dicts,
      train_measures_dicts,
      fit_times,
@@ -169,7 +170,7 @@ def fit_and_score(algo, trainset, testset, measures,
     algo.fit(trainset)  # 在训练集上进行训练
     fit_time = time.time() - start_fit
     start_test = time.time()
-    predictions = algo.test(testset)
+    predictions = algo.test(testset)  # 计算测试集的得分
     test_time = time.time() - start_test
 
     if return_train_measures:
@@ -177,7 +178,7 @@ def fit_and_score(algo, trainset, testset, measures,
 
     test_measures = dict()
     train_measures = dict()
-    for m in measures:
+    for m in measures:  # 逐个计算评价指标
         # 提取对应的测评函数--计算得分
         f = getattr(accuracy, m.lower())  # 从一个包中提取属性函数
         test_measures[m] = f(predictions, verbose=0)

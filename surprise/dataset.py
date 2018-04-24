@@ -108,6 +108,7 @@ class Dataset:
 
     @classmethod
     def load_from_file(cls, file_path, reader):
+        # 从指定的文件，始终指定的读取方式读取数据
         """Load a dataset from a (custom) file.
 
         Use this if you want to use a custom dataset and all of the ratings are
@@ -169,12 +170,13 @@ class Dataset:
         return DatasetAutoFolds(reader=reader, df=df)
 
     def read_ratings(self, file_name):
+        # [(user, item, rating, timestamp), .....]
         """Return a list of ratings (user, item, rating, timestamp) read from
         file_name"""
 
         with open(os.path.expanduser(file_name)) as f:
             raw_ratings = [self.reader.parse_line(line) for line in
-                           itertools.islice(f, self.reader.skip_lines, None)]
+                           itertools.islice(f, self.reader.skip_lines, None, self.reader.step)]
         return raw_ratings
 
     def folds(self):
@@ -203,13 +205,18 @@ class Dataset:
     def construct_trainset(self, raw_trainset):
 
         raw2inner_id_users = {}
+        # {urid: uid}  uid 是自增ID，从0到len(urids)
         raw2inner_id_items = {}
+        # {irid: iid}  iid 是自增ID，从0到len(irids)
 
         current_u_index = 0
         current_i_index = 0
 
         ur = defaultdict(list)
+        # {uid: [(iid, r), ...]}
+
         ir = defaultdict(list)
+        # {iid: [(uid, r), ...]}
 
         # user raw id, item raw id, translated rating, time stamp
         for urid, irid, r, timestamp in raw_trainset:

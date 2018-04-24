@@ -38,13 +38,13 @@ class Reader():
         rating_scale(:obj:`tuple`, optional): The rating scale used for every
             rating.  Default is ``(1, 5)``.
         skip_lines(:obj:`int`, optional): Number of lines to skip at the
-            beginning of the file. Default is ``0``.
+            beginning of the file. Default is ``0``.以后每隔指定行采样一次数据
 
     """
 
     # 如果输入name,后面的格式读取参数就不用了，否则就要自己输入格式读取参数
     def __init__(self, name=None, line_format='user item rating', sep=None,
-                 rating_scale=(1, 5), skip_lines=0):
+                 rating_scale=(1, 5), skip_lines=0, step=1):
 
         if name:
             try:
@@ -55,7 +55,8 @@ class Reader():
                                  ', '.join(BUILTIN_DATASETS.keys()) + '.')
         else:
             self.sep = sep
-            self.skip_lines = skip_lines
+            self.step = step  # 数据的采样步长是1，就是逐行读，2：每隔一行读
+            self.skip_lines = skip_lines  # 如果设置2，就是跳过前两行
             self.rating_scale = rating_scale
 
             lower_bound, higher_bound = rating_scale

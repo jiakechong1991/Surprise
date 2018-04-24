@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''This module contains the Trainset class.'''
 
 
@@ -61,7 +62,7 @@ class Trainset:
 
     def knows_user(self, uid):
         """Indicate if the user is part of the trainset.
-
+        是否这个uid在训练集中
         A user is part of the trainset if the user has at least one rating.
 
         Args:
@@ -75,7 +76,7 @@ class Trainset:
 
     def knows_item(self, iid):
         """Indicate if the item is part of the trainset.
-
+        是否这个id在训练集中
         An item is part of the trainset if the item was rated at least once.
 
         Args:

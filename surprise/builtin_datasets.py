@@ -42,7 +42,9 @@ BUILTIN_DATASETS = {
         BuiltinDataset(
             url='http://files.grouplens.org/datasets/movielens/ml-100k.zip',  # 要下载的数据集
             path=join(get_dataset_dir(), 'ml-100k/ml-100k/u.data'),  # 用户-商品-评分-文件
-            reader_params=dict(line_format='user item rating timestamp',  # 这个文件的行数据格式
+
+            # 这个文件的行数据格式，一级怎么读取它们
+            reader_params=dict(line_format='user item rating timestamp',
                                rating_scale=(1, 5),  # 评分的等级范围：1-5分
                                sep='\t')  # 行数据的切割符
         ),

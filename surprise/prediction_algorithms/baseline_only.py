@@ -38,7 +38,7 @@ class BaselineOnly(AlgoBase):
         return self
 
     def estimate(self, u, i):
-
+        # est = bu[u] + bu[i]
         est = self.trainset.global_mean
         if self.trainset.knows_user(u):
             est += self.bu[u]

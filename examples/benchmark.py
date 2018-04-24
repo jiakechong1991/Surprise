@@ -98,12 +98,12 @@ print(len(data.raw_ratings))
 print(data.ratings_file)
 print(data.reader.indexes)
 # 1/0
-kf = KFold(random_state=0)  # folds will be the same for all algorithms.
+kf = KFold(n_splits=5, random_state=0)  # folds will be the same for all algorithms.
 
 table = []
 for klass in classes:
     start = time.time()
-    out = cross_validate(klass(), data, ['rmse', 'mae'], kf)
+    out = cross_validate(klass(), data, ['rmse', 'mae'], kf, verbose=True)
     cv_time = str(datetime.timedelta(seconds=int(time.time() - start)))
     mean_rmse = '{:.3f}'.format(np.mean(out['test_rmse']))
     mean_mae = '{:.3f}'.format(np.mean(out['test_mae']))

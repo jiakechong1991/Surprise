@@ -42,6 +42,7 @@ from ..utils import get_rng
 
 
 def get_cv(cv):
+    # 对输入的cv进行安全检查
     '''Return a 'validated' CV iterator.'''
 
     if cv is None:
@@ -57,7 +58,7 @@ def get_cv(cv):
 
 class KFold():
     '''A basic cross-validation iterator.
-
+    # k-1-fold运行k次(分成k分,一共运行k次)
     Each fold is used once as a testset while the k - 1 remaining folds are
     used for training.
 
@@ -79,21 +80,20 @@ class KFold():
 
     def __init__(self, n_splits=5, random_state=None, shuffle=True):
 
-        self.n_splits = n_splits  # 切分成几份
+        self.n_splits = n_splits  # k-1-fold运行k次(分成k分,一共运行k次)
         self.shuffle = shuffle
         self.random_state = random_state
 
     def split(self, data):
-        # 切分数据集
-        '''Generator function to iterate over trainsets and testsets.
-
+        # 切分数据集-->训练集,测试集
+        """Generator function to iterate over trainsets and testsets.
         Args:
             data(:obj:`Dataset<surprise.dataset.Dataset>`): The data containing
                 ratings that will be devided into trainsets and testsets.
 
         Yields:
             tuple of (trainset, testset)
-        '''
+        """
 
         # data.raw_ratings 这是评分列表[(user,item,rate, time),...]
         if self.n_splits > len(data.raw_ratings) or self.n_splits < 2:
@@ -105,19 +105,22 @@ class KFold():
         indices = np.arange(len(data.raw_ratings))
 
         if self.shuffle:  # 对数组进行混洗
-            get_rng(self.random_state).shuffle(indices)  # 对多维数组，仅仅会对axis=0的一个粥进行混排
+            # 对多维数组，仅仅会对axis=0的一个轴进行混排
+            get_rng(self.random_state).shuffle(indices)
 
         start, stop = 0, 0
+        # print(len(indices), "sum")
         for fold_i in range(self.n_splits):
             start = stop
             stop += len(indices) // self.n_splits
+            # print(stop, "111")
             if fold_i < len(indices) % self.n_splits:
                 stop += 1
+                # print(stop, "222")
 
-            raw_trainset = [data.raw_ratings[i] for i in chain(indices[:start],
-                                                               indices[stop:])]
+            raw_trainset = [data.raw_ratings[i] for i in chain(indices[:start], indices[stop:])]
             raw_testset = [data.raw_ratings[i] for i in indices[start:stop]]
-
+            # print(len(raw_trainset), len(raw_testset), "--")
             trainset = data.construct_trainset(raw_trainset)
             testset = data.construct_testset(raw_testset)
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*—
 """
 This module includes the two methods for baseline computation: stochastic
 gradient descent and alternating least squares.
@@ -16,7 +17,7 @@ def baseline_als(self):
 
     Args:
         self: The algorithm that needs to compute baselines.
-
+    计算给定训练集上，每个item和每个user的bias
     Returns:
         A tuple ``(bu, bi)``, which are users and items baselines.
     """
@@ -26,7 +27,9 @@ def baseline_als(self):
     # see also https://www.youtube.com/watch?v=gCaOa3W9kM0&t=32m55s
     # (Alex Smola on RS, ML Class 10-701)
 
+    # 计算每个user的bias
     cdef np.ndarray[np.double_t] bu = np.zeros(self.trainset.n_users)
+    # 计算每个item的的bias
     cdef np.ndarray[np.double_t] bi = np.zeros(self.trainset.n_items)
 
     cdef int u, i
@@ -38,11 +41,12 @@ def baseline_als(self):
     cdef double reg_i = self.bsl_options.get('reg_i', 10)
 
     for dummy in range(n_epochs):
-        for i in self.trainset.all_items():
+        for i in self.trainset.all_items():  # 迭代器： all item
             dev_i = 0
             for (u, r) in self.trainset.ir[i]:
                 dev_i += r - global_mean - bu[u]
 
+            # dev_i/(10+这个物品的评分个数)来归一化
             bi[i] = dev_i / (reg_i + len(self.trainset.ir[i]))
 
         for u in self.trainset.all_users():
