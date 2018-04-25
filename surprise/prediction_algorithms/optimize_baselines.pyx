@@ -37,8 +37,8 @@ def baseline_als(self):
     cdef double global_mean = self.trainset.global_mean
 
     cdef int n_epochs = self.bsl_options.get('n_epochs', 10)
-    cdef double reg_u = self.bsl_options.get('reg_u', 15)
-    cdef double reg_i = self.bsl_options.get('reg_i', 10)
+    cdef double reg_u = self.bsl_options.get('reg_u', 15)  # 经验系数--根据不同的数据集不一样
+    cdef double reg_i = self.bsl_options.get('reg_i', 10)  # 经验系数
 
     for dummy in range(n_epochs):
         for i in self.trainset.all_items():  # 迭代器： all item
