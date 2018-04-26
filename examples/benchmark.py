@@ -36,16 +36,16 @@ from surprise import CoClustering
 
 # The algorithms to cross-validate
 classes = [
-    BaselineOnly,
-    # SVD,
-    # SVDpp,
-    # NMF,
-    # SlopeOne,
-    # KNNBasic,
-    # KNNWithMeans,
-    # KNNBaseline,
-    # CoClustering,
-    # NormalPredictor
+    # BaselineOnly,  # 1
+    SVD,  # 2
+    # SVDpp,  # 3
+    # NMF,  # 4
+    # SlopeOne,  # 5
+    # KNNBasic,  # 6
+    # KNNWithMeans,  # 7
+    # KNNBaseline,  # 8
+    # CoClustering,  # 9
+    # NormalPredictor  # 10
 ]
 
 # ugly dict to map algo names and datasets to their markdown links in the table
@@ -90,7 +90,7 @@ np.random.seed(0)
 random.seed(0)
 
 dataset = 'ml-1m'
-dataset = 'ml-100k'
+# dataset = 'ml-100k'
 data = Dataset.load_builtin(dataset)
 print(dir(data))
 print(data)

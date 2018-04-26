@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 the :mod:`matrix_factorization` module includes some algorithms using matrix
 factorization.
@@ -77,16 +78,23 @@ class SVD(AlgoBase):
 
 
     Args:
+        # 隐变量的维度数
         n_factors: The number of factors. Default is ``100``.
+        # SGD(其实这里是BGD)迭代多少轮
         n_epochs: The number of iteration of the SGD procedure. Default is
             ``20``.
+        # 数据是否是有偏的
         biased(bool): Whether to use baselines (or biases). See :ref:`note
             <unbiased_note>` above.  Default is ``True``.
+        # factor ：正态分布均值
         init_mean: The mean of the normal distribution for factor vectors
             initialization. Default is ``0``.
+        # factor ： 正态分布方差
         init_std_dev: The standard deviation of the normal distribution for
             factor vectors initialization. Default is ``0.1``.
+        # 学习速率
         lr_all: The learning rate for all parameters. Default is ``0.005``.
+        # 正则化项
         reg_all: The regularization term for all parameters. Default is
             ``0.02``.
         lr_bu: The learning rate for :math:`b_u`. Takes precedence over
@@ -112,6 +120,7 @@ class SVD(AlgoBase):
             ``fit()``.  If RandomState instance, this same instance is used as
             RNG. If ``None``, the current RNG from numpy is used.  Default is
             ``None``.
+        # 是否可视化执行过程
         verbose: If ``True``, prints the current epoch. Default is ``False``.
 
     Attributes:
@@ -217,10 +226,10 @@ class SVD(AlgoBase):
 
         bu = np.zeros(trainset.n_users, np.double)
         bi = np.zeros(trainset.n_items, np.double)
-        pu = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_users, self.n_factors))
-        qi = rng.normal(self.init_mean, self.init_std_dev,
-                        (trainset.n_items, self.n_factors))
+        pu = rng.normal(self.init_mean, self.init_std_dev, (trainset.n_users, self.n_factors))
+
+        rng = get_rng(self.random_state)  # 我觉的这里也因该设置，不然调参可比性降低
+        qi = rng.normal(self.init_mean, self.init_std_dev, (trainset.n_items, self.n_factors))
 
         if not self.biased:
             global_mean = 0
@@ -232,15 +241,19 @@ class SVD(AlgoBase):
 
                 # compute current error
                 dot = 0  # <q_i, p_u>
+                # 这是等价写法，使用矩阵乘法,但是我这种写法没有利用成cython加速，所以慢与原作者的写法
+                # dot = np.dot(qi[i].reshape(1, self.n_factors), pu[u].reshape(self.n_factors, 1))
                 for f in range(self.n_factors):
                     dot += qi[i, f] * pu[u, f]
-                err = r - (global_mean + bu[u] + bi[i] + dot)
+                err = r - (global_mean + bu[u] + bi[i] + dot)  # 计算误差
+
+                # 进行梯度下降迭代更新：
 
                 # update biases
                 if self.biased:
+
                     bu[u] += lr_bu * (err - reg_bu * bu[u])
                     bi[i] += lr_bi * (err - reg_bi * bi[i])
-
                 # update factors
                 for f in range(self.n_factors):
                     puf = pu[u, f]
@@ -259,16 +272,17 @@ class SVD(AlgoBase):
         known_user = self.trainset.knows_user(u)
         known_item = self.trainset.knows_item(i)
 
-        if self.biased:
+        if self.biased:  # 是否rating有偏
             est = self.trainset.global_mean
 
+            # 如果哪一项不知道，就不考虑其偏置
             if known_user:
                 est += self.bu[u]
 
             if known_item:
                 est += self.bi[i]
 
-            if known_user and known_item:
+            if known_user and known_item:  # 有一个不知道，就无法计算其矩阵乘
                 est += np.dot(self.qi[i], self.pu[u])
 
         else:
