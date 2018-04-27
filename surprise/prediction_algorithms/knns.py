@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 the :mod:`knns` module includes some k-NN inspired algorithms.
 """

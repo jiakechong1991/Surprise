@@ -33,10 +33,13 @@ class AlgoBase(object):
 
     def __init__(self, **kwargs):
 
+        # bsl_options 配置迭代优化算法的类型 als或者sgd,如果选择对应的算法，还要给出对应
+        # 的算法参数
         self.bsl_options = kwargs.get('bsl_options', {})
+        # (物品/用户)相似度计算 配置
         self.sim_options = kwargs.get('sim_options', {})
         if 'user_based' not in self.sim_options:
-            self.sim_options['user_based'] = True
+            self.sim_options['user_based'] = True  # 默认使用 base user计算
         self.skip_train = False
 
         if (guf(self.__class__.fit) is guf(AlgoBase.fit) and

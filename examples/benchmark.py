@@ -37,11 +37,11 @@ from surprise import CoClustering
 # The algorithms to cross-validate
 classes = [
     # BaselineOnly,  # 1
-    SVD,  # 2
+    # SVD,  # 2
     # SVDpp,  # 3
     # NMF,  # 4
     # SlopeOne,  # 5
-    # KNNBasic,  # 6
+    KNNBasic,  # 6
     # KNNWithMeans,  # 7
     # KNNBaseline,  # 8
     # CoClustering,  # 9

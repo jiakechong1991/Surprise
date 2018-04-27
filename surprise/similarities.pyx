@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 The :mod:`similarities <surprise.similarities>` module includes tools to
 compute similarity metrics between users or items. You may need to refer to the
@@ -27,7 +28,7 @@ from six import iteritems
 
 def cosine(n_x, yr, min_support):
     """Compute the cosine similarity between all pairs of users (or items).
-
+    # 仅仅考虑公共用户(物品)
     Only **common** users (or items) are taken into account. The cosine
     similarity is defined as:
 
