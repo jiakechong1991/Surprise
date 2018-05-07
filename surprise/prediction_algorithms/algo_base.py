@@ -287,7 +287,7 @@ class AlgoBase(object):
 
         args = [n_x, yr, min_support]
 
-        name = self.sim_options.get('name', 'msd').lower()
+        name = self.sim_options.get('name', 'msd').lower()  # 默认使用msd
         if name == 'pearson_baseline':
             shrinkage = self.sim_options.get('shrinkage', 100)
             bu, bi = self.compute_baselines()

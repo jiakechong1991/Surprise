@@ -46,7 +46,9 @@ class Trainset:
                  offset, raw2inner_id_users, raw2inner_id_items):
 
         self.ur = ur
+        # {uid: [(iid, r), ...]}
         self.ir = ir
+        # {iid: [(uid, r), ...]}
         self.n_users = n_users
         self.n_items = n_items
         self.n_ratings = n_ratings
